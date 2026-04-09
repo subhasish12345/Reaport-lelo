@@ -86,10 +86,10 @@ def generate_report_bytes(content: str) -> bytes:
     fr.font.size = Pt(12)
     _add_page_number(fr)
 
-    # Set numbering format to lowerRoman for first section
+    # Set numbering format to upperRoman for first section
     sectPr = first_section._sectPr
     pgNumType = OxmlElement('w:pgNumType')
-    pgNumType.set(ns.qn('w:fmt'), 'lowerRoman')
+    pgNumType.set(ns.qn('w:fmt'), 'upperRoman')
     sectPr.append(pgNumType)
 
     styles = doc.styles
