@@ -72,6 +72,26 @@ def generate_report_bytes(content: str) -> bytes:
         section.left_margin   = Inches(1)
         section.right_margin  = Inches(1)
 
+    # --- Setup Front Matter Numbering (i, ii, iii) ---
+    first_section = doc.sections[0]
+    first_section.footer_distance = Inches(0.5)
+    footer = first_section.footer
+    # Ensure footer has a paragraph
+    if not footer.paragraphs:
+        footer.add_paragraph()
+    fp = footer.paragraphs[0]
+    fp.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    fr = fp.add_run()
+    fr.font.name = 'Times New Roman'
+    fr.font.size = Pt(12)
+    _add_page_number(fr)
+
+    # Set numbering format to lowerRoman for first section
+    sectPr = first_section._sectPr
+    pgNumType = OxmlElement('w:pgNumType')
+    pgNumType.set(ns.qn('w:fmt'), 'lowerRoman')
+    sectPr.append(pgNumType)
+
     styles = doc.styles
 
     # Normal style
@@ -176,9 +196,13 @@ def generate_report_bytes(content: str) -> bytes:
                 fr.font.name = 'Times New Roman'
                 fr.font.size = Pt(12)
                 _add_page_number(fr)
+                
+                # Restart page numbering at 1 AND switch to decimal (1, 2, 3)
+                sectPr = new_section._sectPr
                 pgNumType = OxmlElement('w:pgNumType')
                 pgNumType.set(ns.qn('w:start'), "1")
-                new_section._sectPr.append(pgNumType)
+                pgNumType.set(ns.qn('w:fmt'), 'decimal')
+                sectPr.append(pgNumType)
             else:
                 doc.add_page_break()
 
