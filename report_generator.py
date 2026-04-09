@@ -111,6 +111,19 @@ def generate_report_bytes(content: str) -> bytes:
     h3.paragraph_format.space_before = Pt(14)
     h3.paragraph_format.space_after  = Pt(10)
 
+    # --- Ensure 'Caption' style exists ---
+    try:
+        cap_style = styles['Caption']
+    except KeyError:
+        from docx.enum.style import WD_STYLE_TYPE
+        cap_style = styles.add_style('Caption', WD_STYLE_TYPE.PARAGRAPH)
+        cap_style.base_style = styles['Normal']
+        cap_style.font.italic = True
+        cap_style.font.size = Pt(11)
+        cap_style.font.name = 'Times New Roman'
+        cap_style.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+        cap_style.paragraph_format.space_after = Pt(12)
+
     # -----------------------------------------------------------------------
     # Front matter placeholder
     # -----------------------------------------------------------------------
@@ -129,7 +142,8 @@ def generate_report_bytes(content: str) -> bytes:
 
     # List of Figures
     doc.add_paragraph("List of Figures", style='Heading 1')
-    _add_field(doc.add_paragraph(), 'TOC \\h \\z \\c "Figure"')
+    # \t "Caption" tells word to pick up every paragraph with 'Caption' style
+    _add_field(doc.add_paragraph(), 'TOC \\h \\z \\t "Caption"')
     doc.add_paragraph(
         "[Update in Word: Ctrl+A → F9 → Update entire table]"
     ).italic = True
