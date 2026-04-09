@@ -76,11 +76,16 @@ def _add_bookmark(paragraph, bookmark_name, bookmark_id):
 def _set_cell_border(cell, **kwargs):
     """
     Apply borders to a cell.
-    Usage: _set_cell_border(cell, top={"sz": 12, "color": "000000", "val": "single"})
     """
     tc = cell._tc
     tcPr = tc.get_or_add_tcPr()
-    tcBorders = tcPr.get_or_add_tcBorders()
+    
+    # Check if tcBorders already exists
+    tcBorders = tcPr.find(ns.qn('w:tcBorders'))
+    if tcBorders is None:
+        tcBorders = OxmlElement('w:tcBorders')
+        tcPr.append(tcBorders)
+
     for side, params in kwargs.items():
         tag = 'w:' + side
         border = OxmlElement(tag)
