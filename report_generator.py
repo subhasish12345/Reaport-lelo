@@ -174,10 +174,12 @@ def generate_report_bytes(content: str) -> bytes:
     fr.font.size = Pt(12)
     _add_page_number(fr)
 
-    # Set numbering format to upperRoman for first section
+    # Set numbering format to upperRoman for first section and START AT 5 (V)
+    # (Since Title, Certificate, Ack, Abstract = pages 1-4)
     sectPr = first_section._sectPr
     pgNumType = OxmlElement('w:pgNumType')
     pgNumType.set(ns.qn('w:fmt'), 'upperRoman')
+    pgNumType.set(ns.qn('w:start'), '5')
     sectPr.append(pgNumType)
 
     styles = doc.styles
@@ -245,6 +247,7 @@ def generate_report_bytes(content: str) -> bytes:
             
         p1 = row[1].paragraphs[0]
         p1.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        p1.text = "..." # Placeholder until update
         _add_pageref(p1, item['bookmark'])
     
     _style_grid_table(toc_table)
@@ -270,6 +273,7 @@ def generate_report_bytes(content: str) -> bytes:
             row[0].text = item['text']
             p1 = row[1].paragraphs[0]
             p1.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+            p1.text = "..." # Placeholder until update
             _add_pageref(p1, item['bookmark'])
             
         _style_grid_table(lof_table)
@@ -299,7 +303,10 @@ def generate_report_bytes(content: str) -> bytes:
                 fr = fp.add_run()
                 _add_page_number(fr)
                 
-                # Restart numbering at 1 (decimal)
+                # Restart numbering at 1 (decimal) and ensure centered
+                for p in new_section.footer.paragraphs:
+                    p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+                    
                 sectPr = new_section._sectPr
                 pgNumType = OxmlElement('w:pgNumType')
                 pgNumType.set(ns.qn('w:start'), "1")
