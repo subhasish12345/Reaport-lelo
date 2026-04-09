@@ -174,42 +174,72 @@ def generate_report_bytes(content: str) -> bytes:
     fr.font.size = Pt(12)
     _add_page_number(fr)
 
-    # Set numbering format to upperRoman for first section and START AT 5 (V)
+    # Set numbering format to upperRoman for first section and START AT 4 (IV)
     # (Since Title, Certificate, Ack, Abstract = pages 1-4)
     sectPr = first_section._sectPr
     pgNumType = OxmlElement('w:pgNumType')
     pgNumType.set(ns.qn('w:fmt'), 'upperRoman')
-    pgNumType.set(ns.qn('w:start'), '5')
+    pgNumType.set(ns.qn('w:start'), '4')
     sectPr.append(pgNumType)
 
     styles = doc.styles
 
-    # Normal style
+    # Normal style — 12pt, double spacing, justified
     ns_style = styles['Normal']
     ns_style.font.name = 'Times New Roman'
     ns_style.font.size = Pt(12)
-    ns_style.paragraph_format.line_spacing      = 1.5
+    ns_style.paragraph_format.line_spacing      = 2.0
+    ns_style.paragraph_format.line_spacing_rule = 1
     ns_style.paragraph_format.alignment         = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
 
-    # Heading 1
+    # Heading 1 — Chapter names: 18pt Bold
     h1 = styles['Heading 1']
     h1.font.name = 'Times New Roman'
-    h1.font.size = Pt(14) # Standard for TOC cells
+    h1.font.size = Pt(18)
     h1.font.bold = True
     h1.font.color.rgb = RGBColor(0, 0, 0)
-    h1.paragraph_format.space_before = Pt(12)
-    h1.paragraph_format.space_after  = Pt(6)
+    h1.paragraph_format.alignment   = WD_PARAGRAPH_ALIGNMENT.LEFT
+    h1.paragraph_format.space_before = Pt(24)
+    h1.paragraph_format.space_after  = Pt(12)
 
-    # --- Ensure 'Caption' style exists ---
+    # Heading 2 — Subheadings: 16pt Bold
+    h2 = styles['Heading 2']
+    h2.font.name = 'Times New Roman'
+    h2.font.size = Pt(16)
+    h2.font.bold = True
+    h2.font.color.rgb = RGBColor(0, 0, 0)
+    h2.paragraph_format.space_before = Pt(18)
+    h2.paragraph_format.space_after  = Pt(12)
+
+    # Heading 3 — Sub-subheadings: 14pt Bold
+    try:
+        h3 = styles['Heading 3']
+    except KeyError:
+        from docx.enum.style import WD_STYLE_TYPE
+        h3 = styles.add_style('Heading 3', WD_STYLE_TYPE.PARAGRAPH)
+    h3.font.name = 'Times New Roman'
+    h3.font.size = Pt(14)
+    h3.font.bold = True
+    h3.font.color.rgb = RGBColor(0, 0, 0)
+    h3.paragraph_format.space_before = Pt(14)
+    h3.paragraph_format.space_after  = Pt(10)
+
+    # --- Ensure 'Caption' style exists — 10pt italic centered ---
     try:
         cap_style = styles['Caption']
+        cap_style.font.name = 'Times New Roman'
+        cap_style.font.size = Pt(10)
+        cap_style.font.italic = True
+        cap_style.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        cap_style.paragraph_format.space_after = Pt(12)
     except KeyError:
         from docx.enum.style import WD_STYLE_TYPE
         cap_style = styles.add_style('Caption', WD_STYLE_TYPE.PARAGRAPH)
         cap_style.base_style = styles['Normal']
         cap_style.font.italic = True
-        cap_style.font.size = Pt(11)
+        cap_style.font.size = Pt(10)
         cap_style.font.name = 'Times New Roman'
+        cap_style.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
         cap_style.paragraph_format.space_after = Pt(12)
 
     # -----------------------------------------------------------------------
@@ -345,6 +375,12 @@ def generate_report_bytes(content: str) -> bytes:
             spacer.paragraph_format.keep_with_next = True
 
             cap = doc.add_paragraph(item['text'], style='Caption')
+            # Force caption font/size directly in case style is overridden
+            for run in cap.runs:
+                run.font.name = 'Times New Roman'
+                run.font.size = Pt(10)
+                run.font.italic = True
+            cap.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
             bookmark_id += 1
             _add_bookmark(cap, item['bookmark'], bookmark_id)
 
