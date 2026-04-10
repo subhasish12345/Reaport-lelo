@@ -1,47 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Reaport Lelo — Academic Report Generator</title>
-  <meta name="description" content="Paste your formatted report text and download a perfectly formatted DOCX in seconds. Built for students. Free, instant, no login." />
+  <title>ReportForge — Academic Report Generator</title>
+  <meta name="description"
+    content="Paste your formatted report text and download a perfectly formatted DOCX in seconds. Built for students." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
   <style>
     /* =====================================================================
        DESIGN TOKENS
     ===================================================================== */
     :root {
-      --bg:          #080b14;
-      --bg2:         #0d1220;
-      --surface:     #111827;
-      --surface2:    #1a2235;
-      --border:      rgba(99,102,241,.18);
-      --border2:     rgba(99,102,241,.35);
-      --accent:      #6366f1;
-      --accent2:     #8b5cf6;
-      --accent3:     #a78bfa;
-      --teal:        #06b6d4;
-      --green:       #10b981;
-      --text:        #f1f5f9;
-      --text2:       #94a3b8;
-      --text3:       #64748b;
+      --bg: #080b14;
+      --bg2: #0d1220;
+      --surface: #111827;
+      --surface2: #1a2235;
+      --border: rgba(99, 102, 241, .18);
+      --border2: rgba(99, 102, 241, .35);
+      --accent: #6366f1;
+      --accent2: #8b5cf6;
+      --accent3: #a78bfa;
+      --teal: #06b6d4;
+      --green: #10b981;
+      --text: #f1f5f9;
+      --text2: #94a3b8;
+      --text3: #64748b;
       --tag-chapter: #6366f1;
       --tag-heading: #8b5cf6;
-      --tag-sub:     #a78bfa;
-      --tag-para:    #22d3ee;
-      --tag-figure:  #f59e0b;
-      --radius:      14px;
-      --radius-lg:   22px;
-      --shadow:      0 8px 40px rgba(99,102,241,.15);
-      --glow:        0 0 40px rgba(99,102,241,.25);
+      --tag-sub: #a78bfa;
+      --tag-para: #22d3ee;
+      --tag-figure: #f59e0b;
+      --radius: 14px;
+      --radius-lg: 22px;
+      --shadow: 0 8px 40px rgba(99, 102, 241, .15);
+      --glow: 0 0 40px rgba(99, 102, 241, .25);
     }
 
     /* =====================================================================
        RESET & BASE
     ===================================================================== */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       background: var(--bg);
@@ -54,51 +68,100 @@
        ANIMATED BACKGROUND
     ===================================================================== */
     .bg-grid {
-      position: fixed; inset: 0; z-index: 0;
+      position: fixed;
+      inset: 0;
+      z-index: 0;
       background-image:
-        linear-gradient(rgba(99,102,241,.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(99,102,241,.04) 1px, transparent 1px);
+        linear-gradient(rgba(99, 102, 241, .04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99, 102, 241, .04) 1px, transparent 1px);
       background-size: 60px 60px;
       pointer-events: none;
     }
+
     .bg-glow {
-      position: fixed; z-index: 0; pointer-events: none;
-      border-radius: 50%; filter: blur(120px); opacity: .35;
+      position: fixed;
+      z-index: 0;
+      pointer-events: none;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: .35;
     }
-    .bg-glow-1 { width:600px;height:600px;top:-200px;left:-200px;background:radial-gradient(circle,#6366f1,transparent 70%); }
-    .bg-glow-2 { width:500px;height:500px;bottom:-150px;right:-100px;background:radial-gradient(circle,#8b5cf6,transparent 70%); }
-    .bg-glow-3 { width:400px;height:400px;top:40%;left:40%;background:radial-gradient(circle,#06b6d4,transparent 70%); opacity:.15; }
+
+    .bg-glow-1 {
+      width: 600px;
+      height: 600px;
+      top: -200px;
+      left: -200px;
+      background: radial-gradient(circle, #6366f1, transparent 70%);
+    }
+
+    .bg-glow-2 {
+      width: 500px;
+      height: 500px;
+      bottom: -150px;
+      right: -100px;
+      background: radial-gradient(circle, #8b5cf6, transparent 70%);
+    }
+
+    .bg-glow-3 {
+      width: 400px;
+      height: 400px;
+      top: 40%;
+      left: 40%;
+      background: radial-gradient(circle, #06b6d4, transparent 70%);
+      opacity: .15;
+    }
 
     /* =====================================================================
        LAYOUT
     ===================================================================== */
-    .page { position: relative; z-index: 1; }
+    .page {
+      position: relative;
+      z-index: 1;
+    }
 
     /* =====================================================================
        NAV
     ===================================================================== */
     nav {
-      position: sticky; top: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 32px;
-      background: rgba(8,11,20,.8);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 48px;
+      background: rgba(8, 11, 20, .8);
       backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
     }
+
     .nav-brand {
-      display: flex; align-items: center; gap: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
       font-family: 'Outfit', sans-serif;
-      font-size: 1.5rem; font-weight: 800;
+      font-size: 1.5rem;
+      font-weight: 800;
       background: linear-gradient(135deg, #818cf8, #a78bfa, #67e8f9);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
       text-decoration: none;
     }
-    .nav-brand svg { flex-shrink: 0; }
+
+    .nav-brand svg {
+      flex-shrink: 0;
+    }
+
     .nav-badge {
-      font-size: 0.7rem; font-weight: 600; letter-spacing: .08em;
-      padding: 3px 10px; border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      padding: 3px 10px;
+      border-radius: 999px;
       background: linear-gradient(135deg, #6366f1, #8b5cf6);
-      color: #fff; text-transform: uppercase;
+      color: #fff;
+      text-transform: uppercase;
       -webkit-text-fill-color: #fff;
     }
 
@@ -109,88 +172,152 @@
       text-align: center;
       padding: 80px 24px 48px;
     }
+
     .hero-pill {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 6px 18px; border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 18px;
+      border-radius: 999px;
       border: 1px solid var(--border2);
-      background: rgba(99,102,241,.1);
-      font-size: .8rem; font-weight: 600; color: var(--accent3);
-      letter-spacing: .06em; text-transform: uppercase;
+      background: rgba(99, 102, 241, .1);
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--accent3);
+      letter-spacing: .06em;
+      text-transform: uppercase;
       margin-bottom: 28px;
       animation: fadeDown .6s ease both;
     }
+
     .hero-pill::before {
-      content: ''; width: 8px; height: 8px; border-radius: 50%;
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
       background: var(--green);
       box-shadow: 0 0 8px var(--green);
       animation: pulse 2s infinite;
     }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.6;transform:scale(.85)} }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1)
+      }
+
+      50% {
+        opacity: .6;
+        transform: scale(.85)
+      }
+    }
 
     h1 {
       font-family: 'Outfit', sans-serif;
       font-size: clamp(2.4rem, 5vw, 4rem);
-      font-weight: 800; line-height: 1.1;
+      font-weight: 800;
+      line-height: 1.1;
       margin-bottom: 20px;
       animation: fadeDown .7s .1s ease both;
     }
+
     h1 span {
       background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #67e8f9 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
+
     .hero-sub {
-      color: var(--text2); font-size: 1.1rem; max-width: 560px; margin: 0 auto 48px;
+      color: var(--text2);
+      font-size: 1.1rem;
+      max-width: 560px;
+      margin: 0 auto 48px;
       line-height: 1.65;
       animation: fadeDown .8s .2s ease both;
     }
 
     @keyframes fadeDown {
-      from { opacity:0; transform:translateY(-20px); }
-      to   { opacity:1; transform:translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     /* =====================================================================
        STEPS BAR
     ===================================================================== */
     .steps {
-      display: flex; justify-content: center; gap: 0;
-      flex-wrap: wrap;
+      display: flex;
+      justify-content: center;
+      gap: 0;
       margin-bottom: 60px;
       animation: fadeDown .9s .3s ease both;
     }
+
     .step {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 24px;
       border: 1px solid var(--border);
       background: var(--surface);
-      font-size: .85rem; color: var(--text2);
+      font-size: .85rem;
+      color: var(--text2);
     }
-    .step:first-child { border-radius: var(--radius) 0 0 var(--radius); }
-    .step:last-child  { border-radius: 0 var(--radius) var(--radius) 0; }
-    .step + .step { border-left: none; }
+
+    .step:first-child {
+      border-radius: var(--radius) 0 0 var(--radius);
+    }
+
+    .step:last-child {
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+
+    .step+.step {
+      border-left: none;
+    }
+
     .step-num {
-      width: 26px; height: 26px; border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
-      display: flex; align-items: center; justify-content: center;
-      font-size: .75rem; font-weight: 700; color: #fff; flex-shrink: 0;
-    }
-    @media (max-width: 640px) {
-      .steps { flex-direction: column; align-items: stretch; gap: 6px; padding: 0 16px; }
-      .step, .step:first-child, .step:last-child { border-radius: var(--radius); border-left: 1px solid var(--border); }
-      .step + .step { border-left: 1px solid var(--border); }
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .75rem;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
     }
 
     /* =====================================================================
        MAIN CARD
     ===================================================================== */
     .main-card {
-      max-width: 1100px; margin: 0 auto 80px;
+      max-width: 1100px;
+      margin: 0 auto 80px;
       padding: 0 24px;
       animation: fadeUp .9s .35s ease both;
     }
+
     @keyframes fadeUp {
-      from { opacity:0; transform:translateY(30px); }
-      to   { opacity:1; transform:translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .card {
@@ -205,32 +332,53 @@
        CARD HEADER / TABS
     ===================================================================== */
     .card-header {
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       padding: 20px 28px;
       background: var(--surface2);
       border-bottom: 1px solid var(--border);
-      flex-wrap: wrap; gap: 12px;
+      flex-wrap: wrap;
+      gap: 12px;
     }
+
     .card-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.05rem; font-weight: 700; color: var(--text);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
     }
+
     .tabs {
-      display: flex; gap: 4px;
+      display: flex;
+      gap: 4px;
       background: var(--bg2);
-      padding: 4px; border-radius: 10px;
+      padding: 4px;
+      border-radius: 10px;
     }
+
     .tab {
-      padding: 7px 18px; border-radius: 7px;
-      font-size: .82rem; font-weight: 600;
-      cursor: pointer; transition: all .2s;
-      color: var(--text2); border: none; background: transparent;
+      padding: 7px 18px;
+      border-radius: 7px;
+      font-size: .82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+      color: var(--text2);
+      border: none;
+      background: transparent;
     }
+
     .tab.active {
       background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #fff; box-shadow: 0 2px 12px rgba(99,102,241,.4);
+      color: #fff;
+      box-shadow: 0 2px 12px rgba(99, 102, 241, .4);
     }
-    .tab:hover:not(.active) { color: var(--text); background: rgba(99,102,241,.1); }
+
+    .tab:hover:not(.active) {
+      color: var(--text);
+      background: rgba(99, 102, 241, .1);
+    }
 
     /* =====================================================================
        CARD BODY — two columns
@@ -240,45 +388,66 @@
       grid-template-columns: 1fr 340px;
       min-height: 540px;
     }
-    @media (max-width: 900px) {
-      .card-body { grid-template-columns: 1fr; }
-      .guide-panel { border-top: 1px solid var(--border); border-left: none !important; max-height: none; }
-      .editor-panel { border-right: none; }
+
+    @media (max-width: 860px) {
+      .card-body {
+        grid-template-columns: 1fr;
+      }
     }
 
     /* Left — editor panel */
-    .editor-panel { padding: 20px; border-right: 1px solid var(--border); }
-    @media (max-width: 900px) { .editor-panel { padding: 16px; } }
+    .editor-panel {
+      padding: 24px;
+      border-right: 1px solid var(--border);
+    }
 
     /* Pane switching */
-    .pane { display: none; }
-    .pane.active { display: flex; flex-direction: column; gap: 16px; height: 100%; }
+    .pane {
+      display: none;
+    }
+
+    .pane.active {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      height: 100%;
+    }
 
     /* Textarea */
-    .editor-wrap { position: relative; flex: 1; }
+    .editor-wrap {
+      position: relative;
+      flex: 1;
+    }
+
     .code-textarea {
-      width: 100%; height: 380px;
+      width: 100%;
+      height: 400px;
       background: var(--bg2);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       color: var(--text);
       font-family: 'JetBrains Mono', monospace;
-      font-size: .82rem; line-height: 1.7;
+      font-size: .82rem;
+      line-height: 1.7;
       padding: 16px;
       resize: vertical;
       outline: none;
       transition: border-color .2s, box-shadow .2s;
     }
-    @media (max-width: 640px) { .code-textarea { height: 220px; font-size: .75rem; } }
+
     .code-textarea:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(99,102,241,.15);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, .15);
     }
 
     /* Keyword highlighting overlay (cosmetic label only — no actual overlay) */
     .editor-hint {
-      font-size: .76rem; color: var(--text3); margin-top: 4px;
-      display: flex; align-items: center; gap: 6px;
+      font-size: .76rem;
+      color: var(--text3);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     /* Upload pane */
@@ -286,78 +455,148 @@
       flex: 1;
       border: 2px dashed var(--border2);
       border-radius: var(--radius);
-      background: rgba(99,102,241,.04);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 14px; cursor: pointer; transition: all .25s;
-      padding: 32px; min-height: 300px;
+      background: rgba(99, 102, 241, .04);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: all .25s;
+      padding: 32px;
+      min-height: 300px;
     }
-    .upload-zone:hover, .upload-zone.drag-over {
+
+    .upload-zone:hover,
+    .upload-zone.drag-over {
       border-color: var(--accent);
-      background: rgba(99,102,241,.1);
+      background: rgba(99, 102, 241, .1);
       box-shadow: var(--glow);
     }
-    .upload-icon { font-size: 3rem; line-height: 1; }
-    .upload-label { font-size: 1rem; font-weight: 600; color: var(--text2); text-align: center; }
-    .upload-sub   { font-size: .8rem; color: var(--text3); }
-    .upload-zone input[type=file] { display: none; }
+
+    .upload-icon {
+      font-size: 3rem;
+      line-height: 1;
+    }
+
+    .upload-label {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text2);
+      text-align: center;
+    }
+
+    .upload-sub {
+      font-size: .8rem;
+      color: var(--text3);
+    }
+
+    .upload-zone input[type=file] {
+      display: none;
+    }
+
     .file-selected {
-      font-size: .85rem; color: var(--green); font-weight: 600;
-      display: flex; align-items: center; gap: 8px;
+      font-size: .85rem;
+      color: var(--green);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     /* Project title input */
-    .field-group { display: flex; flex-direction: column; gap: 6px; }
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
     .field-label {
-      font-size: .78rem; font-weight: 600; color: var(--text2);
-      letter-spacing: .04em; text-transform: uppercase;
+      font-size: .78rem;
+      font-weight: 600;
+      color: var(--text2);
+      letter-spacing: .04em;
+      text-transform: uppercase;
     }
+
     .field-input {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 10px; padding: 10px 14px;
-      color: var(--text); font-family: 'Inter', sans-serif; font-size: .9rem;
-      outline: none; transition: border-color .2s, box-shadow .2s;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: .9rem;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
     }
+
     .field-input:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(99,102,241,.15);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, .15);
     }
 
     /* Generate button */
     .btn-generate {
-      width: 100%; padding: 15px;
+      width: 100%;
+      padding: 15px;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border: none; border-radius: var(--radius);
-      color: #fff; font-family: 'Outfit', sans-serif;
-      font-size: 1.05rem; font-weight: 700;
-      cursor: pointer; transition: all .25s;
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      box-shadow: 0 4px 24px rgba(99,102,241,.35);
+      border: none;
+      border-radius: var(--radius);
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .25s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 24px rgba(99, 102, 241, .35);
     }
+
     .btn-generate:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(99,102,241,.5);
+      box-shadow: 0 8px 32px rgba(99, 102, 241, .5);
     }
-    .btn-generate:active { transform: translateY(0); }
+
+    .btn-generate:active {
+      transform: translateY(0);
+    }
+
     .btn-generate:disabled {
-      opacity: .6; cursor: not-allowed; transform: none;
+      opacity: .6;
+      cursor: not-allowed;
+      transform: none;
     }
 
     /* Spinner */
     .spinner {
-      width: 20px; height: 20px; border-radius: 50%;
-      border: 2.5px solid rgba(255,255,255,.3);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2.5px solid rgba(255, 255, 255, .3);
       border-top-color: #fff;
       animation: spin .7s linear infinite;
       display: none;
     }
-    @keyframes spin { to { transform:rotate(360deg); } }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
     /* Error banner */
     .error-banner {
-      display:none; padding: 12px 16px; border-radius: var(--radius);
-      background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.3);
-      color: #fca5a5; font-size: .85rem;
+      display: none;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      background: rgba(239, 68, 68, .12);
+      border: 1px solid rgba(239, 68, 68, .3);
+      color: #fca5a5;
+      font-size: .85rem;
     }
 
     /* =====================================================================
@@ -368,50 +607,91 @@
       overflow-y: auto;
       max-height: 600px;
     }
+
     .guide-title {
       font-family: 'Outfit', sans-serif;
-      font-size: .95rem; font-weight: 700;
-      color: var(--text); margin-bottom: 16px;
-      display: flex; align-items: center; gap: 8px;
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    .guide-title::before { content:'📋'; }
 
-    .tag-list { display: flex; flex-direction: column; gap: 10px; }
+    .guide-title::before {
+      content: '📋';
+    }
+
+    .tag-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
     .tag-item {
       background: var(--bg2);
       border: 1px solid var(--border);
-      border-radius: 10px; padding: 12px 14px;
+      border-radius: 10px;
+      padding: 12px 14px;
       transition: border-color .2s;
     }
-    .tag-item:hover { border-color: var(--border2); }
-    .tag-badge {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: .78rem; font-weight: 700;
-      padding: 2px 10px; border-radius: 6px; display: inline-block;
-      margin-bottom: 6px;
-    }
-    .tag-desc { font-size: .78rem; color: var(--text2); line-height: 1.5; }
-    .tag-example {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: .72rem; color: var(--text3);
-      margin-top: 5px; padding: 6px 10px;
-      background: rgba(0,0,0,.3); border-radius: 6px;
-      white-space: pre-wrap; word-break: break-all;
+
+    .tag-item:hover {
+      border-color: var(--border2);
     }
 
-    .divider { height: 1px; background: var(--border); margin: 10px 0; }
+    .tag-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+
+    .tag-desc {
+      font-size: .78rem;
+      color: var(--text2);
+      line-height: 1.5;
+    }
+
+    .tag-example {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      color: var(--text3);
+      margin-top: 5px;
+      padding: 6px 10px;
+      background: rgba(0, 0, 0, .3);
+      border-radius: 6px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 10px 0;
+    }
 
     /* copy sample button */
     .btn-sample {
-      width: 100%; margin-top: 16px; padding: 10px;
+      width: 100%;
+      margin-top: 16px;
+      padding: 10px;
       background: transparent;
       border: 1px solid var(--border2);
-      border-radius: 10px; color: var(--accent3);
-      font-size: .82rem; font-weight: 600; cursor: pointer;
+      border-radius: 10px;
+      color: var(--accent3);
+      font-size: .82rem;
+      font-weight: 600;
+      cursor: pointer;
       transition: all .2s;
     }
+
     .btn-sample:hover {
-      background: rgba(99,102,241,.1);
+      background: rgba(99, 102, 241, .1);
       border-color: var(--accent);
     }
 
@@ -420,179 +700,234 @@
     ===================================================================== */
     .success-overlay {
       display: none;
-      position: fixed; inset: 0; z-index: 200;
-      background: rgba(8,11,20,.85); backdrop-filter: blur(10px);
-      align-items: center; justify-content: center;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(8, 11, 20, .85);
+      backdrop-filter: blur(10px);
+      align-items: center;
+      justify-content: center;
     }
-    .success-overlay.show { display: flex; }
+
+    .success-overlay.show {
+      display: flex;
+    }
+
     .success-box {
       background: var(--surface);
       border: 1px solid var(--border2);
       border-radius: var(--radius-lg);
-      padding: 48px 40px; text-align: center;
-      max-width: 400px; width: 90%;
+      padding: 48px 40px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
       box-shadow: var(--glow);
-      animation: popIn .4s cubic-bezier(.34,1.56,.64,1) both;
+      animation: popIn .4s cubic-bezier(.34, 1.56, .64, 1) both;
     }
+
     @keyframes popIn {
-      from{opacity:0;transform:scale(.8)} to{opacity:1;transform:scale(1)}
+      from {
+        opacity: 0;
+        transform: scale(.8)
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1)
+      }
     }
-    .success-icon { font-size: 4rem; margin-bottom: 16px; }
+
+    .success-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+
     .success-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.6rem; font-weight: 800; margin-bottom: 10px;
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 10px;
       background: linear-gradient(135deg, var(--green), var(--teal));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    .success-sub { color: var(--text2); font-size: .9rem; margin-bottom: 28px; }
+
+    .success-sub {
+      color: var(--text2);
+      font-size: .9rem;
+      margin-bottom: 28px;
+    }
+
     .btn-close {
-      padding: 12px 32px; border-radius: 10px;
+      padding: 12px 32px;
+      border-radius: 10px;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #fff; font-weight: 700; border: none; cursor: pointer;
-      font-size: .95rem; transition: all .2s;
+      color: #fff;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      font-size: .95rem;
+      transition: all .2s;
     }
-    .btn-close:hover { transform:translateY(-2px); box-shadow: 0 6px 20px rgba(99,102,241,.4); }
+
+    .btn-close:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, .4);
+    }
 
     /* =====================================================================
        FEATURES SECTION
     ===================================================================== */
     .features {
-      max-width: 1100px; margin: 0 auto 96px; padding: 0 24px;
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      max-width: 1100px;
+      margin: 0 auto 96px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 20px;
     }
+
     .feature-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 24px 20px;
+      border-radius: var(--radius);
+      padding: 24px 20px;
       transition: transform .2s, border-color .2s, box-shadow .2s;
     }
+
     .feature-card:hover {
       transform: translateY(-4px);
       border-color: var(--border2);
       box-shadow: var(--shadow);
     }
-    .feature-icon { font-size: 2rem; margin-bottom: 12px; }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+
     .feature-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 1rem; font-weight: 700; margin-bottom: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
     }
-    .feature-desc { font-size: .83rem; color: var(--text2); line-height: 1.6; }
+
+    .feature-desc {
+      font-size: .83rem;
+      color: var(--text2);
+      line-height: 1.6;
+    }
 
     /* =====================================================================
        FOOTER
     ===================================================================== */
     footer {
-      text-align: center; padding: 32px 24px;
+      text-align: center;
+      padding: 32px 24px;
       border-top: 1px solid var(--border);
-      color: var(--text3); font-size: .82rem;
-    }
-    footer span { color: var(--text2); }
-    /* =====================================================================
-       MOBILE RESPONSIVE OVERRIDES
-    ===================================================================== */
-    @media (max-width: 640px) {
-      nav { padding: 12px 16px; }
-      .nav-brand { font-size: 1.2rem; }
-      .nav-badge { display: none; }
-      .hero { padding: 48px 16px 32px; }
-      h1 { font-size: 1.8rem; }
-      .hero-sub { font-size: .92rem; }
-      .main-card { padding: 0 12px; margin-bottom: 48px; }
-      .card-header { padding: 14px 16px; }
-      .features { padding: 0 12px; gap: 12px; }
-      .feature-card { padding: 18px 14px; }
-      .upload-zone { min-height: 180px; padding: 20px; }
-      .success-box { padding: 32px 20px; }
-      .success-title { font-size: 1.3rem; }
-    }
-    @media (max-width: 480px) {
-      h1 { font-size: 1.55rem; line-height: 1.2; }
-      .hero-pill { font-size: .7rem; padding: 5px 12px; }
-      .tab { padding: 6px 12px; font-size: .75rem; }
+      color: var(--text3);
+      font-size: .82rem;
     }
 
+    footer span {
+      color: var(--text2);
+    }
   </style>
 </head>
+
 <body>
 
-<!-- Background -->
-<div class="bg-grid"></div>
-<div class="bg-glow bg-glow-1"></div>
-<div class="bg-glow bg-glow-2"></div>
-<div class="bg-glow bg-glow-3"></div>
+  <!-- Background -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+  <div class="bg-glow bg-glow-3"></div>
 
-<div class="page">
+  <div class="page">
 
-  <!-- NAV -->
-  <nav>
-    <a class="nav-brand" href="#">
-      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-        <rect width="32" height="32" rx="8" fill="url(#grad)"/>
-        <path d="M8 10h16M8 16h10M8 22h13" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
-        <circle cx="24" cy="22" r="4" fill="url(#grad2)"/>
-        <path d="M22.5 22l1 1 2-2" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <defs>
-          <linearGradient id="grad" x1="0" y1="0" x2="32" y2="32">
-            <stop stop-color="#6366f1"/><stop offset="1" stop-color="#8b5cf6"/>
-          </linearGradient>
-          <linearGradient id="grad2" x1="20" y1="18" x2="28" y2="26">
-            <stop stop-color="#10b981"/><stop offset="1" stop-color="#06b6d4"/>
-          </linearGradient>
-        </defs>
-      </svg>
-      Reaport Lelo
-    </a>
-    <span class="nav-badge">Free &middot; Instant</span>
-  </nav>
+    <!-- NAV -->
+    <nav>
+      <a class="nav-brand" href="#">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="8" fill="url(#grad)" />
+          <path d="M8 10h16M8 16h10M8 22h13" stroke="#fff" stroke-width="2.2" stroke-linecap="round" />
+          <circle cx="24" cy="22" r="4" fill="url(#grad2)" />
+          <path d="M22.5 22l1 1 2-2" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          <defs>
+            <linearGradient id="grad" x1="0" y1="0" x2="32" y2="32">
+              <stop stop-color="#6366f1" />
+              <stop offset="1" stop-color="#8b5cf6" />
+            </linearGradient>
+            <linearGradient id="grad2" x1="20" y1="18" x2="28" y2="26">
+              <stop stop-color="#10b981" />
+              <stop offset="1" stop-color="#06b6d4" />
+            </linearGradient>
+          </defs>
+        </svg>
+        ReportForge
+      </a>
+      <span class="nav-badge">Free · Instant</span>
+    </nav>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-pill">✦ For Students · By Students</div>
-    <h1>Turn your <span>formatted notes</span><br/>into a perfect DOCX</h1>
-    <p class="hero-sub">
-      Write your project report using simple tags like <code style="color:#a78bfa;font-family:'JetBrains Mono',monospace;font-size:.9em">CHAPTER:</code>, <code style="color:#22d3ee;font-family:'JetBrains Mono',monospace;font-size:.9em">PARA:</code>, <code style="color:#f59e0b;font-family:'JetBrains Mono',monospace;font-size:.9em">FIGURE:</code> — and download a fully formatted Word document in one click.
-    </p>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-pill">✦ For Students · By Students</div>
+      <h1>Turn your <span>formatted notes</span><br />into a perfect DOCX</h1>
+      <p class="hero-sub">
+        Write your project report using simple tags like <code
+          style="color:#a78bfa;font-family:'JetBrains Mono',monospace;font-size:.9em">CHAPTER:</code>, <code
+          style="color:#22d3ee;font-family:'JetBrains Mono',monospace;font-size:.9em">PARA:</code>, <code
+          style="color:#f59e0b;font-family:'JetBrains Mono',monospace;font-size:.9em">FIGURE:</code> — and download a
+        fully formatted Word document in one click.
+      </p>
 
-    <!-- Steps -->
-    <div class="steps">
-      <div class="step"><div class="step-num">1</div> Write / Paste content</div>
-      <div class="step"><div class="step-num">2</div> Add your project title</div>
-      <div class="step"><div class="step-num">3</div> Click Generate</div>
-      <div class="step"><div class="step-num">4</div> Download your DOCX</div>
-    </div>
-  </section>
-
-  <!-- MAIN CARD -->
-  <div class="main-card">
-    <div class="card">
-
-      <!-- Card Header -->
-      <div class="card-header">
-        <div class="card-title">📝 Report Editor</div>
-        <div class="tabs">
-          <button class="tab active" onclick="switchTab('paste', this)">Paste Text</button>
-          <button class="tab" onclick="switchTab('upload', this)">Upload File</button>
+      <!-- Steps -->
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div> Write / Paste content
+        </div>
+        <div class="step">
+          <div class="step-num">2</div> Add your project title
+        </div>
+        <div class="step">
+          <div class="step-num">3</div> Click Generate
+        </div>
+        <div class="step">
+          <div class="step-num">4</div> Download your DOCX
         </div>
       </div>
+    </section>
 
-      <!-- Card Body -->
-      <div class="card-body">
+    <!-- MAIN CARD -->
+    <div class="main-card">
+      <div class="card">
 
-        <!-- LEFT: Editor -->
-        <div class="editor-panel">
-          <form id="reportForm" method="POST" action="/generate" enctype="multipart/form-data">
+        <!-- Card Header -->
+        <div class="card-header">
+          <div class="card-title">📝 Report Editor</div>
+          <div class="tabs">
+            <button class="tab active" onclick="switchTab('paste', this)">Paste Text</button>
+            <button class="tab" onclick="switchTab('upload', this)">Upload File</button>
+          </div>
+        </div>
 
-            <!-- Paste pane -->
-            <div class="pane active" id="pane-paste">
-              <div class="field-group">
-                <label class="field-label" for="projectTitle">Project Title</label>
-                <input class="field-input" id="projectTitle" name="project_title"
-                       type="text" placeholder="e.g. Smart Traffic AI System" autocomplete="off"/>
-              </div>
-              <div class="editor-wrap">
-                <textarea class="code-textarea" id="contentArea" name="content"
-                  placeholder="CHAPTER: Chapter 1 Introduction
+        <!-- Card Body -->
+        <div class="card-body">
+
+          <!-- LEFT: Editor -->
+          <div class="editor-panel">
+            <form id="reportForm" method="POST" action="/generate" enctype="multipart/form-data">
+
+              <!-- Paste pane -->
+              <div class="pane active" id="pane-paste">
+                <div class="field-group">
+                  <label class="field-label" for="projectTitle">Project Title</label>
+                  <input class="field-input" id="projectTitle" name="project_title" type="text"
+                    placeholder="e.g. Smart Traffic AI System" autocomplete="off" />
+                </div>
+                <div class="editor-wrap">
+                  <textarea class="code-textarea" id="contentArea" name="content" placeholder="CHAPTER: Chapter 1 Introduction
 
 HEADING: 1.1 Background
 PARA: Write your paragraph text here...
@@ -601,245 +936,253 @@ FIGURE: Figure 1.1 — System architecture overview
 
 HEADING: 1.2 Objectives
 PARA: Your second paragraph here..."></textarea>
-              </div>
-              <div class="editor-hint">
-                💡 Use the format guide on the right. Each tag must be on its own line.
-              </div>
-            </div>
-
-            <!-- Upload pane -->
-            <div class="pane" id="pane-upload">
-              <div class="field-group">
-                <label class="field-label" for="projectTitle2">Project Title</label>
-                <input class="field-input" id="projectTitle2" name="project_title"
-                       type="text" placeholder="e.g. My Final Year Project" autocomplete="off"/>
-              </div>
-              <label class="upload-zone" id="uploadZone" for="fileInput">
-                <input type="file" id="fileInput" name="file" accept=".txt"/>
-                <div class="upload-icon">📂</div>
-                <div class="upload-label">Click or drag & drop your .txt file</div>
-                <div class="upload-sub">Only .txt files · Max 5 MB</div>
-                <div class="file-selected" id="fileSelected" style="display:none">
-                  ✅ <span id="fileName"></span>
                 </div>
-              </label>
-            </div>
+                <div class="editor-hint">
+                  💡 Use the format guide on the right. Each tag must be on its own line.
+                </div>
+              </div>
 
-            <div class="error-banner" id="errorBanner"></div>
+              <!-- Upload pane -->
+              <div class="pane" id="pane-upload">
+                <div class="field-group">
+                  <label class="field-label" for="projectTitle2">Project Title</label>
+                  <input class="field-input" id="projectTitle2" name="project_title" type="text"
+                    placeholder="e.g. My Final Year Project" autocomplete="off" />
+                </div>
+                <label class="upload-zone" id="uploadZone" for="fileInput">
+                  <input type="file" id="fileInput" name="file" accept=".txt" />
+                  <div class="upload-icon">📂</div>
+                  <div class="upload-label">Click or drag & drop your .txt file</div>
+                  <div class="upload-sub">Only .txt files · Max 5 MB</div>
+                  <div class="file-selected" id="fileSelected" style="display:none">
+                    ✅ <span id="fileName"></span>
+                  </div>
+                </label>
+              </div>
 
-            <button class="btn-generate" type="submit" id="generateBtn">
-              <span class="spinner" id="spinner"></span>
-              <span id="btnText">⚡ Generate & Download DOCX</span>
-            </button>
-          </form>
-        </div>
+              <div class="error-banner" id="errorBanner"></div>
 
-        <!-- RIGHT: Format Guide -->
-        <div class="guide-panel">
-          <div class="guide-title">Format Reference</div>
-          <div class="tag-list">
-
-            <div class="tag-item">
-              <div class="tag-badge" style="background:rgba(99,102,241,.2);color:#818cf8">CHAPTER:</div>
-              <div class="tag-desc">Starts a new chapter. Chapter 1 also starts page numbering.</div>
-              <div class="tag-example">CHAPTER: Chapter 1 Introduction</div>
-            </div>
-
-            <div class="tag-item">
-              <div class="tag-badge" style="background:rgba(139,92,246,.2);color:#a78bfa">HEADING:</div>
-              <div class="tag-desc">Section heading (e.g. 1.1, 1.2 ...)</div>
-              <div class="tag-example">HEADING: 1.1 Background</div>
-            </div>
-
-            <div class="tag-item">
-              <div class="tag-badge" style="background:rgba(167,139,250,.15);color:#c084fc">SUBHEADING:</div>
-              <div class="tag-desc">Sub-section heading (e.g. 1.1.1)</div>
-              <div class="tag-example">SUBHEADING: 1.1.1 Technical Feasibility</div>
-            </div>
-
-            <div class="tag-item">
-              <div class="tag-badge" style="background:rgba(6,182,212,.15);color:#67e8f9">PARA:</div>
-              <div class="tag-desc">A body paragraph. Uses justify alignment, Times New Roman 12pt, 1.5 line spacing.</div>
-              <div class="tag-example">PARA: Your paragraph text goes here on a single line.</div>
-            </div>
-
-            <div class="tag-item">
-              <div class="tag-badge" style="background:rgba(245,158,11,.15);color:#fbbf24">FIGURE:</div>
-              <div class="tag-desc">Figure caption. A half-page blank space is reserved above for your image. Caption appears in the List of Figures.</div>
-              <div class="tag-example">FIGURE: Figure 1.1 — System Architecture Diagram</div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div style="font-size:.76rem;color:var(--text3);line-height:1.6;padding:4px 2px">
-              📌 <strong style="color:var(--text2)">Rules:</strong><br/>
-              • Each tag must be on its own line<br/>
-              • Blank lines between tags are ignored<br/>
-              • Everything before Chapter 1 is TOC / LOF<br/>
-              • TOC &amp; LOF update automatically in Word (Ctrl+A → F9)
-            </div>
-
-            <button class="btn-sample" id="loadSampleBtn" onclick="loadSample()">
-              📋 Load Sample Report
-            </button>
+              <button class="btn-generate" type="submit" id="generateBtn">
+                <span class="spinner" id="spinner"></span>
+                <span id="btnText">⚡ Generate & Download DOCX</span>
+              </button>
+            </form>
           </div>
-        </div>
 
-      </div><!-- card-body -->
-    </div><!-- card -->
-  </div><!-- main-card -->
+          <!-- RIGHT: Format Guide -->
+          <div class="guide-panel">
+            <div class="guide-title">Format Reference</div>
+            <div class="tag-list">
 
-  <!-- FEATURES -->
-  <div class="features">
-    <div class="feature-card">
-      <div class="feature-icon">🎓</div>
-      <div class="feature-title">Academic Formatting</div>
-      <div class="feature-desc">Times New Roman 12pt, 1.5 line spacing, 1-inch margins, justify alignment — exactly what universities require.</div>
+              <div class="tag-item">
+                <div class="tag-badge" style="background:rgba(99,102,241,.2);color:#818cf8">CHAPTER:</div>
+                <div class="tag-desc">Starts a new chapter. Chapter 1 also starts page numbering.</div>
+                <div class="tag-example">CHAPTER: Chapter 1 Introduction</div>
+              </div>
+
+              <div class="tag-item">
+                <div class="tag-badge" style="background:rgba(139,92,246,.2);color:#a78bfa">HEADING:</div>
+                <div class="tag-desc">Section heading (e.g. 1.1, 1.2 ...)</div>
+                <div class="tag-example">HEADING: 1.1 Background</div>
+              </div>
+
+              <div class="tag-item">
+                <div class="tag-badge" style="background:rgba(167,139,250,.15);color:#c084fc">SUBHEADING:</div>
+                <div class="tag-desc">Sub-section heading (e.g. 1.1.1)</div>
+                <div class="tag-example">SUBHEADING: 1.1.1 Technical Feasibility</div>
+              </div>
+
+              <div class="tag-item">
+                <div class="tag-badge" style="background:rgba(6,182,212,.15);color:#67e8f9">PARA:</div>
+                <div class="tag-desc">A body paragraph. Uses justify alignment, Times New Roman 12pt, 1.5 line spacing.
+                </div>
+                <div class="tag-example">PARA: Your paragraph text goes here on a single line.</div>
+              </div>
+
+              <div class="tag-item">
+                <div class="tag-badge" style="background:rgba(245,158,11,.15);color:#fbbf24">FIGURE:</div>
+                <div class="tag-desc">Figure caption. A half-page blank space is reserved above for your image. Caption
+                  appears in the List of Figures.</div>
+                <div class="tag-example">FIGURE: Figure 1.1 — System Architecture Diagram</div>
+              </div>
+
+              <div class="divider"></div>
+
+              <div style="font-size:.76rem;color:var(--text3);line-height:1.6;padding:4px 2px">
+                📌 <strong style="color:var(--text2)">Rules:</strong><br />
+                • Each tag must be on its own line<br />
+                • Blank lines between tags are ignored<br />
+                • Everything before Chapter 1 is TOC / LOF<br />
+                • TOC &amp; LOF update automatically in Word (Ctrl+A → F9)
+              </div>
+
+              <button class="btn-sample" id="loadSampleBtn" onclick="loadSample()">
+                📋 Load Sample Report
+              </button>
+            </div>
+          </div>
+
+        </div><!-- card-body -->
+      </div><!-- card -->
+    </div><!-- main-card -->
+
+    <!-- FEATURES -->
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-icon">🎓</div>
+        <div class="feature-title">Academic Formatting</div>
+        <div class="feature-desc">Times New Roman 12pt, 1.5 line spacing, 1-inch margins, justify alignment — exactly
+          what universities require.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📑</div>
+        <div class="feature-title">Auto TOC & Figure List</div>
+        <div class="feature-desc">Table of Contents and List of Figures are inserted as Word fields. One press of F9
+          populates all page numbers.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🖼️</div>
+        <div class="feature-title">Figure Placeholders</div>
+        <div class="feature-desc">Every FIGURE tag reserves half a page for your image. The caption is always on the
+          same page — never split across pages.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📄</div>
+        <div class="feature-title">Page Numbering</div>
+        <div class="feature-desc">Page numbers start from Chapter 1 and are centred in the footer, matching standard
+          academic submission format.</div>
+      </div>
     </div>
-    <div class="feature-card">
-      <div class="feature-icon">📑</div>
-      <div class="feature-title">Auto TOC & Figure List</div>
-      <div class="feature-desc">Table of Contents and List of Figures are inserted as Word fields. One press of F9 populates all page numbers.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🖼️</div>
-      <div class="feature-title">Figure Placeholders</div>
-      <div class="feature-desc">Every FIGURE tag reserves half a page for your image. The caption is always on the same page — never split across pages.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">📄</div>
-      <div class="feature-title">Page Numbering</div>
-      <div class="feature-desc">Page numbers start from Chapter 1 and are centred in the footer, matching standard academic submission format.</div>
+
+    <!-- FOOTER -->
+    <footer>
+      Built with ❤️ for students &nbsp;·&nbsp;
+      <span>ReportForge</span> &nbsp;·&nbsp;
+      Generates DOCX via python-docx — no data stored, ever.
+    </footer>
+
+  </div><!-- page -->
+
+  <!-- SUCCESS OVERLAY -->
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-box">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">Report Generated!</div>
+      <div class="success-sub">Your DOCX has been downloaded.<br />Open in MS Word, then press <strong>Ctrl+A →
+          F9</strong> to update the Table of Contents.</div>
+      <button class="btn-close"
+        onclick="document.getElementById('successOverlay').classList.remove('show')">Done</button>
     </div>
   </div>
 
-  <!-- FOOTER -->
-  <footer>
-    Built with ❤️ for students &nbsp;·&nbsp;
-    <span>Reaport Lelo</span> &nbsp;·&nbsp;
-    No login. No data stored. Ever.
-  </footer>
+  <script>
+    /* =========================================================
+       TAB SWITCHING
+    ========================================================= */
+    function switchTab(pane, btn) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('pane-' + pane).classList.add('active');
 
-</div><!-- page -->
-
-<!-- SUCCESS OVERLAY -->
-<div class="success-overlay" id="successOverlay">
-  <div class="success-box">
-    <div class="success-icon">🎉</div>
-    <div class="success-title">Report Generated!</div>
-    <div class="success-sub">Your DOCX has been downloaded.<br/>Open in MS Word, then press <strong>Ctrl+A → F9</strong> to update the Table of Contents.</div>
-    <button class="btn-close" onclick="document.getElementById('successOverlay').classList.remove('show')">Done</button>
-  </div>
-</div>
-
-<script>
-  /* =========================================================
-     TAB SWITCHING
-  ========================================================= */
-  function switchTab(pane, btn) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('pane-' + pane).classList.add('active');
-
-    // sync project title between panes
-    const t1 = document.getElementById('projectTitle').value;
-    const t2 = document.getElementById('projectTitle2').value;
-    if (pane === 'upload' && !t2) document.getElementById('projectTitle2').value = t1;
-    if (pane === 'paste'  && !t1) document.getElementById('projectTitle').value  = t2;
-  }
-
-  /* =========================================================
-     FILE DRAG & DROP
-  ========================================================= */
-  const zone = document.getElementById('uploadZone');
-  const fileInput = document.getElementById('fileInput');
-
-  fileInput.addEventListener('change', () => {
-    if (fileInput.files.length) showFile(fileInput.files[0].name);
-  });
-
-  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-  zone.addEventListener('dragleave', ()   => zone.classList.remove('drag-over'));
-  zone.addEventListener('drop', e => {
-    e.preventDefault();
-    zone.classList.remove('drag-over');
-    const f = e.dataTransfer.files[0];
-    if (f && f.name.endsWith('.txt')) {
-      fileInput.files = e.dataTransfer.files;
-      showFile(f.name);
+      // sync project title between panes
+      const t1 = document.getElementById('projectTitle').value;
+      const t2 = document.getElementById('projectTitle2').value;
+      if (pane === 'upload' && !t2) document.getElementById('projectTitle2').value = t1;
+      if (pane === 'paste' && !t1) document.getElementById('projectTitle').value = t2;
     }
-  });
 
-  function showFile(name) {
-    document.getElementById('fileName').textContent = name;
-    document.getElementById('fileSelected').style.display = 'flex';
-  }
+    /* =========================================================
+       FILE DRAG & DROP
+    ========================================================= */
+    const zone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('fileInput');
 
-  /* =========================================================
-     FORM SUBMIT — AJAX so we can show spinner + success overlay
-  ========================================================= */
-  document.getElementById('reportForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const btn     = document.getElementById('generateBtn');
-    const spinner = document.getElementById('spinner');
-    const btnText = document.getElementById('btnText');
-    const errBan  = document.getElementById('errorBanner');
-
-    errBan.style.display = 'none';
-    btn.disabled = true;
-    spinner.style.display = 'block';
-    btnText.textContent = 'Generating…';
-
-    // Sync project title from active pane
-    const activePane = document.querySelector('.pane.active');
-    const titleInput = activePane.querySelector('input[name="project_title"]');
-    // If there are two inputs with same name, keep only the active one's value
-    // by temporarily renaming the inactive input
-    const allTitleInputs = document.querySelectorAll('input[name="project_title"]');
-    allTitleInputs.forEach(inp => {
-      if (inp !== titleInput) inp.name = '_project_title_inactive';
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length) showFile(fileInput.files[0].name);
     });
 
-    const formData = new FormData(this);
-
-    // Restore names
-    allTitleInputs.forEach(inp => { inp.name = 'project_title'; });
-
-    try {
-      const res = await fetch('/generate', { method: 'POST', body: formData });
-
-      if (res.ok) {
-        // Trigger file download
-        const blob = await res.blob();
-        const cd   = res.headers.get('Content-Disposition') || '';
-        const match = cd.match(/filename="?([^"]+)"?/);
-        const fname = match ? match[1] : 'Report.docx';
-        const url   = URL.createObjectURL(blob);
-        const a     = document.createElement('a');
-        a.href = url; a.download = fname; a.click();
-        URL.revokeObjectURL(url);
-        document.getElementById('successOverlay').classList.add('show');
-      } else {
-        const data = await res.json();
-        errBan.textContent = '⚠️ ' + (data.error || 'Something went wrong.');
-        errBan.style.display = 'block';
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      const f = e.dataTransfer.files[0];
+      if (f && f.name.endsWith('.txt')) {
+        fileInput.files = e.dataTransfer.files;
+        showFile(f.name);
       }
-    } catch (err) {
-      errBan.textContent = '⚠️ Network error: ' + err.message;
-      errBan.style.display = 'block';
-    } finally {
-      btn.disabled = false;
-      spinner.style.display = 'none';
-      btnText.textContent = '⚡ Generate & Download DOCX';
-    }
-  });
+    });
 
-  /* =========================================================
-     LOAD SAMPLE
-  ========================================================= */
-  function loadSample() {
-    const sample = `CHAPTER: Chapter 1 Introduction
+    function showFile(name) {
+      document.getElementById('fileName').textContent = name;
+      document.getElementById('fileSelected').style.display = 'flex';
+    }
+
+    /* =========================================================
+       FORM SUBMIT — AJAX so we can show spinner + success overlay
+    ========================================================= */
+    document.getElementById('reportForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const btn = document.getElementById('generateBtn');
+      const spinner = document.getElementById('spinner');
+      const btnText = document.getElementById('btnText');
+      const errBan = document.getElementById('errorBanner');
+
+      errBan.style.display = 'none';
+      btn.disabled = true;
+      spinner.style.display = 'block';
+      btnText.textContent = 'Generating…';
+
+      // Sync project title from active pane
+      const activePane = document.querySelector('.pane.active');
+      const titleInput = activePane.querySelector('input[name="project_title"]');
+      // If there are two inputs with same name, keep only the active one's value
+      // by temporarily renaming the inactive input
+      const allTitleInputs = document.querySelectorAll('input[name="project_title"]');
+      allTitleInputs.forEach(inp => {
+        if (inp !== titleInput) inp.name = '_project_title_inactive';
+      });
+
+      const formData = new FormData(this);
+
+      // Restore names
+      allTitleInputs.forEach(inp => { inp.name = 'project_title'; });
+
+      try {
+        const res = await fetch('/generate', { method: 'POST', body: formData });
+
+        if (res.ok) {
+          // Trigger file download
+          const blob = await res.blob();
+          const cd = res.headers.get('Content-Disposition') || '';
+          const match = cd.match(/filename="?([^"]+)"?/);
+          const fname = match ? match[1] : 'Report.docx';
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = fname; a.click();
+          URL.revokeObjectURL(url);
+          document.getElementById('successOverlay').classList.add('show');
+        } else {
+          const data = await res.json();
+          errBan.textContent = '⚠️ ' + (data.error || 'Something went wrong.');
+          errBan.style.display = 'block';
+        }
+      } catch (err) {
+        errBan.textContent = '⚠️ Network error: ' + err.message;
+        errBan.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        spinner.style.display = 'none';
+        btnText.textContent = '⚡ Generate & Download DOCX';
+      }
+    });
+
+    /* =========================================================
+       LOAD SAMPLE
+    ========================================================= */
+    function loadSample() {
+      const sample = `CHAPTER: Chapter 1 Introduction
 
 HEADING: 1.1 Introduction to Project
 PARA: In the contemporary digital era, the rapid proliferation of artificial intelligence has fundamentally transformed various industries. Automation and smart systems have emerged as one of the most pressing societal needs of the twenty-first century.
@@ -861,13 +1204,14 @@ PARA: The technical feasibility assessment examined whether the proposed technol
 
 FIGURE: Figure 2.1 — Feasibility Study Summary Chart showing Technical, Economic, and Operational scores`;
 
-    // Switch to paste tab and fill
-    document.querySelectorAll('.tab')[0].click();
-    document.getElementById('contentArea').value = sample;
-    document.getElementById('projectTitle').value = 'My Academic Project';
-    document.getElementById('loadSampleBtn').textContent = '✅ Sample Loaded!';
-    setTimeout(() => { document.getElementById('loadSampleBtn').textContent = '📋 Load Sample Report'; }, 2000);
-  }
-</script>
+      // Switch to paste tab and fill
+      document.querySelectorAll('.tab')[0].click();
+      document.getElementById('contentArea').value = sample;
+      document.getElementById('projectTitle').value = 'My Academic Project';
+      document.getElementById('loadSampleBtn').textContent = '✅ Sample Loaded!';
+      setTimeout(() => { document.getElementById('loadSampleBtn').textContent = '📋 Load Sample Report'; }, 2000);
+    }
+  </script>
 </body>
+
 </html>

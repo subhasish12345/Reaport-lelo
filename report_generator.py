@@ -130,26 +130,38 @@ def generate_report_bytes(content: str) -> bytes:
         
         if line.startswith('CHAPTER:'):
             text = line.replace('CHAPTER:', '').strip()
-            # Special case for Chapter numbering in text
-            if text.lower().startswith('chapter '):
-                parts = text.split(' ', 2)
-                if len(parts) == 3 and parts[1].isdigit():
-                    text = f"Chapter {parts[1]}: {parts[2]}"
+            sl_no = ""
+            # Extract chapter number (e.g., "1" from "Chapter 1")
+            m = re.search(r'(?i)chapter\s+(\d+)', text)
+            if m:
+                sl_no = m.group(1)
+                # FormatTitle: Chapter 1- Introduction (per SS1)
+                text = text.replace(':', '-').replace('Chapter ' + sl_no, 'Chapter ' + sl_no + '-')
+                # Clean up double dashes or spaces
+                text = re.sub(r'-\s*-', '-', text)
+                text = re.sub(r'Chapter\s+\d+-\s*', f'Chapter {sl_no}- ', text)
             
             bm_counter += 1
-            toc_items.append({'text': text, 'bookmark': f'bm_h{bm_counter}', 'level': 1})
+            toc_items.append({'text': text, 'sl_no': sl_no, 'bookmark': f'bm_h{bm_counter}', 'level': 1})
             
         elif line.startswith('HEADING:'):
             bm_counter += 1
-            toc_items.append({'text': line.replace('HEADING:', '').strip(), 'bookmark': f'bm_h{bm_counter}', 'level': 2})
+            toc_items.append({'text': line.replace('HEADING:', '').strip(), 'sl_no': '', 'bookmark': f'bm_h{bm_counter}', 'level': 2})
             
         elif line.startswith('SUBHEADING:'):
             bm_counter += 1
-            toc_items.append({'text': line.replace('SUBHEADING:', '').strip(), 'bookmark': f'bm_h{bm_counter}', 'level': 3})
+            toc_items.append({'text': line.replace('SUBHEADING:', '').strip(), 'sl_no': '', 'bookmark': f'bm_h{bm_counter}', 'level': 3})
             
         elif line.startswith('FIGURE:'):
+            text = line.replace('FIGURE:', '').strip()
+            sl_no = ""
+            # Extract figure number (e.g., "4.1" from "Figure 4.1")
+            m = re.search(r'(?i)figure\s+([\d\.]+)', text)
+            if m:
+                sl_no = m.group(1)
+            
             bm_counter += 1
-            lof_items.append({'text': line.replace('FIGURE:', '').strip(), 'bookmark': f'bm_f{bm_counter}'})
+            lof_items.append({'text': text, 'sl_no': sl_no, 'bookmark': f'bm_f{bm_counter}'})
 
 
     # -----------------------------------------------------------------------
@@ -252,33 +264,51 @@ def generate_report_bytes(content: str) -> bytes:
     # -----------------------------------------------------------------------
     # GRID TABLE TOC
     # -----------------------------------------------------------------------
-    doc.add_paragraph("Table of Contents", style='Heading 1')
+    p_toc = doc.add_paragraph()
+    p_toc.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    r_toc = p_toc.add_run("Table of Contents")
+    r_toc.font.name = 'Times New Roman'
+    r_toc.font.size = Pt(18)
+    r_toc.font.bold = True
+    r_toc.underline = True
     
-    toc_table = doc.add_table(rows=1, cols=2)
+    toc_table = doc.add_table(rows=1, cols=3)
     toc_table.width = Inches(6.5) # Full page width
     
     # TOC Headers
     hdr_cells = toc_table.rows[0].cells
-    hdr_cells[0].text = "Content"
-    hdr_cells[1].text = "Page"
+    hdr_cells[0].text = "SlNo."
+    hdr_cells[1].text = "Title"
+    hdr_cells[2].text = "PageNo."
     for cell in hdr_cells:
-        cell.paragraphs[0].runs[0].bold = True
-        cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        p = cell.paragraphs[0]
+        p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        if p.runs:
+            p.runs[0].bold = True
+        else:
+            p.add_run().bold = True
         
     for item in toc_items:
         row = toc_table.add_row().cells
-        p0 = row[0].paragraphs[0]
-        p0.text = item['text']
         
+        # SlNo column
+        p_sl = row[0].paragraphs[0]
+        p_sl.text = item.get('sl_no', '')
+        p_sl.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        
+        # Title column
+        p_title = row[1].paragraphs[0]
+        p_title.text = item['text']
         # Indentation for subheadings
-        if item['level'] == 2: p0.paragraph_format.left_indent = Pt(12)
-        if item['level'] == 3: p0.paragraph_format.left_indent = Pt(24)
-        if item['level'] == 1: p0.runs[0].bold = True
+        if item['level'] == 2: p_title.paragraph_format.left_indent = Pt(12)
+        if item['level'] == 3: p_title.paragraph_format.left_indent = Pt(24)
+        if item['level'] == 1: p_title.runs[0].bold = True
             
-        p1 = row[1].paragraphs[0]
-        p1.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-        p1.text = "..." # Placeholder until update
-        _add_pageref(p1, item['bookmark'])
+        # PageNo column
+        p_page = row[2].paragraphs[0]
+        p_page.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        p_page.text = "..." # Placeholder until update
+        _add_pageref(p_page, item['bookmark'])
     
     _style_grid_table(toc_table)
     doc.add_paragraph("[Select table and press F9 to update page numbers]").italic = True
@@ -288,23 +318,44 @@ def generate_report_bytes(content: str) -> bytes:
     # GRID TABLE LOF
     # -----------------------------------------------------------------------
     if lof_items:
-        doc.add_paragraph("List of Figures", style='Heading 1')
-        lof_table = doc.add_table(rows=1, cols=2)
+        p_lof = doc.add_paragraph()
+        p_lof.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        r_lof = p_lof.add_run("List of Figures")
+        r_lof.font.name = 'Times New Roman'
+        r_lof.font.size = Pt(18)
+        r_lof.font.bold = True
+        r_lof.underline = True
+
+        lof_table = doc.add_table(rows=1, cols=3)
+        lof_table.width = Inches(6.5)
         
         hdr = lof_table.rows[0].cells
-        hdr[0].text = "Figure Description"
-        hdr[1].text = "Page"
+        hdr[0].text = "SlNo."
+        hdr[1].text = "Title"
+        hdr[2].text = "PageNo."
         for cell in hdr:
-            cell.paragraphs[0].runs[0].bold = True
-            cell.paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+            p = cell.paragraphs[0]
+            p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+            if p.runs:
+                p.runs[0].bold = True
+            else:
+                p.add_run().bold = True
             
         for item in lof_items:
             row = lof_table.add_row().cells
-            row[0].text = item['text']
-            p1 = row[1].paragraphs[0]
-            p1.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-            p1.text = "..." # Placeholder until update
-            _add_pageref(p1, item['bookmark'])
+            # SlNo
+            p_sl = row[0].paragraphs[0]
+            p_sl.text = item.get('sl_no', '')
+            p_sl.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+            
+            # Title
+            row[1].text = item['text']
+            
+            # PageNo
+            p_page = row[2].paragraphs[0]
+            p_page.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+            p_page.text = "..." # Placeholder until update
+            _add_pageref(p_page, item['bookmark'])
             
         _style_grid_table(lof_table)
         doc.add_page_break()
@@ -319,7 +370,7 @@ def generate_report_bytes(content: str) -> bytes:
     for line in content.split('\n'):
         line = line.strip()
         if not line: continue
-        if line.startswith('===') or line.startswith('NOTE') or line.startswith('FakeShield'): continue
+        if line.startswith('===') or line.startswith('NOTE'): continue
 
         if line.startswith('CHAPTER:'):
             item = toc_items[toc_idx]
